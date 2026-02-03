@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'ShopLaravel')</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-600 text-white p-4" style="display: flex; justify-content: space-between; align-items: center;">
+        <nav class="container mx-auto">
+            <a href="{{ route('home') }}" class="font-bold text-xl">ShopLaravel</a>
+            <a href="{{ route('products.index') }}" class="ml-4">Products</a>
+            <a href="{{ route('about') }}" class="ml-4">About</a>
+        </nav>
+        <nav style="margin-left:auto;">
+
+            @auth
+                <a href="{{ route('profile') }}">My profile</a>
+                <form action="{{ route('logout') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit">Logout</button>
+                </form>
+            @endauth
+
+            @guest
+                <a href="{{ route('register') }}">Register</a>
+                <a href="{{ route('login') }}">Login</a>
+            @endguest
+        </nav>
+
+    </header>
+    
+    <main class="container mx-auto py-8">
+        @yield('content')
+    </main>
+
+    <footer class="bg-gray-800 text-white p-4 mt-8">
+        <div class="container mx-auto text-center">
+            &copy; {{ date('Y') }} ShopLaravel - All rights reserved.
+        </div>
+    </footer>
+</body>
+</html> 
