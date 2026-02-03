@@ -2,26 +2,20 @@
 
 namespace App\Models;
 
-class Category
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Category extends Model
 {
-    public function __construct(
-        private ?int $id,
-        private string $name
-    ) {
-    }
+    use SoftDeletes;
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+    ];
 
-    public function getId(): ?int
+    public function products()
     {
-        return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
+        return $this->hasMany(Product::class);
     }
 }

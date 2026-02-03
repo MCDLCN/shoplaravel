@@ -6,7 +6,7 @@
     <ul>
     @forelse ($products as $product)
         <li>
-            <x-product-card :name="$product->getName()" :price="$product->getPrice()" :id="$product->getId()" />
+            <x-product-card :name="$product->name" :price="$product->price" :id="$product->id" />
         </li>
     @empty
         <li>No products available</li>

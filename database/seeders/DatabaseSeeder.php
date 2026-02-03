@@ -16,10 +16,20 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            CategorySeeder::class
+        ]);
+        $this->call([
+            UsersSeeder::class
+        ]);
+        $this->call([
+            ProductsSeeder::class
+        ]);
+        $this->call([
+            OrdersSeeder::class
+        ]);
+        $this->call([
+            OrderItemsSeeder::class
         ]);
     }
 }

@@ -2,124 +2,94 @@
 
 namespace App\Models;
 
-use InvalidArgumentException;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\Scopes\ActiveScope;
 
-class Product
+class Product extends Model
 {
-    public function __construct(
-        private int $id,
-        private string $name,
-        private float $price
-    ) {
+    use HasFactory, SoftDeletes;
+    protected $fillable = [
+        'category_id',
+        'name',
+        'slug',
+        'description',
+        'price',
+        'stock',
+        'image',
+        'active',
+        'discount'
+    ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+        'active' => 'boolean',
+    ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
-    public function getId(): int
+    public function orderItems()
     {
-        return $this->id;
+        return $this->hasMany(OrderItem::class);
     }
 
-    public function getName(): string
+    public function scopeActive(Builder $query): Builder
     {
-        return $this->name;
+        return $query->where('active', true);
     }
 
-/*     public function getDescription(): string
+    public function scopeStocker(Builder $query): Builder
     {
-        return $this->description;
-    } */
-
-    public function getPrice(): float
-    {
-        return $this->price;
+        return $query->where('stock', '>', 0);
     }
 
-/*     public function getStock(): int
+    public function scopeCheap(Builder $query): Builder
     {
-        return $this->stock;
-    } */
-
-/*     public function getCategory(): Category
-    {
-        return $this->category;
-    } */
-
-/*     public function getDiscount(): int
-    {
-        return $this->discount;
-    } */
-
-/*     public function getImage(): string
-    {
-        return $this->image;
-    } */
-
-/*     public function getDateAdded(): string
-    {
-        return $this->dateAdded;
-    } */
-
-    public function getPriceIncludingTax(float $vat = 20): float
-    {
-        return $this->price + ($this->price * $vat / 100);
+        return $query->where('price', '<', 15);
     }
 
-/*     public function isInStock(): bool
+    public function scopeCategory(Builder $query, int|array $category_id): Builder
     {
-        return $this->stock > 0;
-    } */
-
-/*     public function reduceStock(int $amount): void
-    {
-        if ($amount < 1) {
-            throw new InvalidArgumentException('Amount must be >= 1');
-        }
-        if ($this->stock < $amount) {
-            throw new InvalidArgumentException('Not enough in stock');
-        }
-        $this->stock -= $amount;
-    } */
-
-    public function applyDiscount(float $discount): float
-    {
-        return $this->price * (1 - ($discount / 100));
+        return is_array($category_id)
+        ? $query->whereIn('category_id', $category_id)
+        : $query->where('category_id', $category_id);
     }
 
-/*     public function isNew(): bool
+    protected function formattedPrice(): Attribute
     {
-        return strtotime($this->dateAdded) > strtotime('-30 days');
+        return Attribute::make(
+            get: fn () =>number_format((float) $this->price, 2, ',', ' ').'$',
+        );  
     }
 
-    public function isOnSale(): bool
+    protected function name(): Attribute
     {
-        return $this->discount > 0;
-    } */
-
-/*     public function getFinalPrice(): float
-    {
-        return $this->isOnSale()
-            ? $this->applyDiscount($this->discount)
-            : $this->price;
-    } */
-/*     public function canAddToCart(int $qty, int $currentInCart = 0): bool
-    {
-        if ($qty < 1) {
-            return false;
-        }
-        return ($currentInCart + $qty) <= $this->stock;
-    }
- */
-    public function __toString(): string
-    {
-        return $this->name.' for '.$this->getPrice();
+        return Attribute::make(
+            set: fn (string $value) => [
+                'name' => $value,
+                'slug' => Str::slug($value),
+            ],
+        );
     }
 
-    public function setPrice(float $price): void
+    protected function stock(): Attribute
     {
-        $this->price = $price;
+        return Attribute::make(
+            get: fn ($value) =>
+                $value < 1 ? 'Out of stock'
+                : ($value < 5 ? 'Limited stock' : 'In stock')
+        );
     }
 
-    public function setId(int $id): void
+    protected static function booted(): void
     {
-        $this->id = $id;
+        static::addGlobalScope(new ActiveScope);
     }
 }
