@@ -23,7 +23,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
 });
 
-Route::resource('categories', CategoryController::class);
+Route::resource(name: 'categories', controller: CategoryController::class);
 
 Route::post('/logout', [PageController::class, 'logout'])->name('logout');
 Route::post('/login', [PageController::class, 'login'])->name('login');

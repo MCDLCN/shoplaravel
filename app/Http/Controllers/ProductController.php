@@ -1,10 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\Category;
-
+use App\Models\Scopes\ActiveScope;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
 
 class ProductController extends Controller
 {
@@ -13,8 +18,16 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
-        return view('products.index', compact('products'));
+        $products = Product::with('category')
+                             ->orderBy('name')
+                             ->paginate(15);
+        $inactiveProducts = Product::with('category')
+                                    ->withoutGlobalScope(ActiveScope::class)
+                                    ->where('active',0)
+                                    ->orderBy('name')
+                                    ->paginate(15);
+
+        return view('products.index', compact('products','inactiveProducts'));
     }
 
     /**
@@ -29,22 +42,15 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        //dd('store reached', request()->all());
-        $data = $request->validate([
-            'category_id' => ['required', 'exists:categories,id'],
-            'name'        => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'price'       => ['required', 'numeric', 'min:0'],
-            'stock'       => ['required', 'integer', 'min:0'],
-            'image'       => ['nullable', 'image'],
-            'active'      => ['nullable', 'boolean'],
-        ]);
 
-        $data['active'] = $request->boolean('active'); // checkbox -> true/false
-
-        // (optional) handle image upload later if you want
+        $data = $request->validated();
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $data['image'] = $path;
+        }        
+        $data['active'] = $request->boolean('active');
 
         try {
             Product::create($data);
@@ -81,19 +87,20 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        $data = $request->validate([
-            'category_id' => ['required', 'exists:categories,id'],
-            'name'        => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'price'       => ['required', 'numeric', 'min:0'],
-            'stock'       => ['required', 'integer', 'min:0'],
-            'image'       => ['nullable', 'image'],
-            'active'      => ['nullable', 'boolean'],
-        ]);
+        $data = $request->validated();
+        
+        if ($request->hasFile('image')) {
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
 
-        // checkbox handling
+            $data['image'] = $request->file('image')->store('products', 'public');
+        } else {
+            unset($data['image']);
+        }   
+
         $data['active'] = $request->boolean('active');
 
         // update product (slug handled automatically by your mutator)
@@ -107,8 +114,11 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'Product deleted successfully.');
     }
 }

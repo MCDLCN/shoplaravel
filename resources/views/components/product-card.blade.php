@@ -1,11 +1,44 @@
-<div style="border:1px solid #ddd; border-radius:12px; padding:16px;">
-    <h3 style="margin:0 0 8px;">{{ $name }}</h3>
-    <p style="margin:0 0 12px;">Price: {{ $price }}</p>
+<div style="border:1px solid #ddd; border-radius:12px; padding:16px; margin-bottom:12px;">
+    <div>
+    @if($product->image)
+        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+    @endif
+    <h3 style="margin:0 0 8px;">{{ $product->name }}</h3>
 
-    <a href="{{ route('products.show', ['product' => $id]) }}">
-        View details
-    </a>
-    <a href="{{ route('products.edit', ['product' =>$id]) }}">
-        Edit product
-    </a>
+    <p style="margin:0 0 12px;">
+        @if ($product->discount > 0)
+            <span style="text-decoration: line-through; color:#888;">
+                {{ $product->formatted_price }}
+            </span>
+            <span style="margin-left:8px; font-weight:bold;">
+                {{ $product->formatted_discounted_price }}
+            </span>
+        @else
+            {{ $product->formatted_price }}
+        @endif
+    </p>
+    <a href="{{ route('categories.show', ['category' => $product->category->id]) }}" style="margin:0 0 12px;">{{ $product->category->name }}</a>
+    </div>
+    <div style="display:flex; gap:12px;">
+        <a href="{{ route('products.show', ['product' => $product->id]) }}">
+            View details
+        </a>
+
+        <a href="{{ route('products.edit', ['product' => $product->id]) }}">
+            Edit product
+        </a>
+
+        <form
+            action="{{ route('products.destroy', ['product' => $product->id]) }}"
+            method="POST"
+            onsubmit="return confirm('Are you sure you want to delete this product?');"
+        >
+            @csrf
+            @method('DELETE')
+
+            <button type="submit" style="background:none; border:none; color:red; cursor:pointer;">
+                Delete
+            </button>
+        </form>
+    </div>
 </div>

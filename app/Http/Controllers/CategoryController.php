@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -33,9 +35,13 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Category $category)
     {
-        //
+        $products = $category->products()
+                             ->with('category')
+                             ->orderBy("name")
+                             ->paginate(15);
+        return view('categories.show', compact('products','category'));
     }
 
     /**

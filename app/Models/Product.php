@@ -28,11 +28,17 @@ class Product extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'active' => 'boolean',
+        'discount' => 'integer',
     ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
     }
 
     public function orderItems()
@@ -69,6 +75,25 @@ class Product extends Model
         );  
     }
 
+    protected function discountedPrice(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+                $this->discount > 0
+                    ? round($this->price * (1 - $this->discount / 100), 2)
+                    : $this->price
+        );
+    }
+
+    protected function formattedDiscountedPrice(): Attribute
+    {
+        return Attribute::make(
+            get: fn () =>
+            number_format($this->discounted_price, 2).' $'
+            );
+    }
+
+
     protected function name(): Attribute
     {
         return Attribute::make(
@@ -92,4 +117,6 @@ class Product extends Model
     {
         static::addGlobalScope(new ActiveScope);
     }
+
+
 }

@@ -1,3 +1,5 @@
+Part 4:
+
 use App\Models\Product;
 Product::all();
 count(Product::all());
@@ -31,3 +33,10 @@ $p->save();
 
 Product::find(x)->delete();
 Product::find(x)->forceDelete();
+
+Part 6:
+
+use App\Models\Product;
+Product::find(15)->category;
+use App\Models\Category;
+Category::find(1)->products;

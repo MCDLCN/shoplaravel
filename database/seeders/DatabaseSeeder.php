@@ -31,5 +31,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             OrderItemsSeeder::class
         ]);
+        $this->call([
+            TagsSeeder::class
+        ]);
     }
 }
