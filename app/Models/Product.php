@@ -79,7 +79,7 @@ class Product extends Model
         );
     }
 
-    protected function stock(): Attribute
+    protected function stockLabel(): Attribute
     {
         return Attribute::make(
             get: fn ($value) =>

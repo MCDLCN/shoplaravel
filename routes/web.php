@@ -10,8 +10,8 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 
-Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show')->where('id', '[0-9]+');
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+//Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show')->where('id', '[0-9]+');
+Route::resource('products', ProductController::class);
 /* Route::get('/product/{product}', function(Product $product) {
     return $product->name;
 }); */
