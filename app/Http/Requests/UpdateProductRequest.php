@@ -26,6 +26,8 @@ class UpdateProductRequest extends FormRequest
             'discount'    => ['nullable', 'integer', 'min:0', 'max:100'],
             'image'       => ['nullable', 'image'],
             'active'      => ['nullable', 'boolean'],
+            'tags'        => ['nullable', 'array'],
+            'tags.*'      => ['integer', 'exists:tags,id'],
         ];
     }
 }

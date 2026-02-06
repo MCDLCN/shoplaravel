@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Scopes\ActiveScope;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,10 +19,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('category')
+        $products = Product::with('category','tags','image')
                              ->orderBy('name')
                              ->paginate(15);
-        $inactiveProducts = Product::with('category')
+        $inactiveProducts = Product::with('category', 'tags', 'image')
                                     ->withoutGlobalScope(ActiveScope::class)
                                     ->where('active',0)
                                     ->orderBy('name')
@@ -35,8 +36,9 @@ class ProductController extends Controller
      */
     public function create()
     {
+        $tags = Tag::all();
         $categories = Category::all();
-        return view('products.create', compact('categories'));
+        return view('products.create', compact('categories', 'tags'));
     }
 
     /**
@@ -46,14 +48,20 @@ class ProductController extends Controller
     {
 
         $data = $request->validated();
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
-            $data['image'] = $path;
-        }        
+                
         $data['active'] = $request->boolean('active');
 
         try {
-            Product::create($data);
+
+            $product = Product::create($data);
+
+            if($request->filled('tags')) {
+                $product->tags()->sync($request->input('tags'));
+            }
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('products', 'public');
+                $product->image()->create(['path' => $path]);
+            }
 
             return redirect()
                 ->route('products.index')
@@ -69,10 +77,9 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Product $product)
     {
-        $product = Product::find($id);
-        return "This is {$product->name} at the price of {$product->price}$";
+        return view('products.show', compact('product'));
     }
 
     /**
@@ -81,7 +88,8 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::all();
-        return view("products.edit", compact("product","categories"));
+        $tags = Tag::all();
+        return view("products.edit", compact("product","categories","tags"));
     }
 
     /**
@@ -90,22 +98,24 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $data = $request->validated();
-        
-        if ($request->hasFile('image')) {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-
-            $data['image'] = $request->file('image')->store('products', 'public');
-        } else {
-            unset($data['image']);
-        }   
 
         $data['active'] = $request->boolean('active');
 
         // update product (slug handled automatically by your mutator)
         $product->update($data);
 
+        if ($request->hasFile('image')) {
+            // delete old file + old row
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image->path);
+                $product->image()->delete();
+            }
+
+            $path = $request->file('image')->store('products', 'public');
+            $product->image()->create(['path' => $path]);
+        }
+
+        $product->tags()->sync($request->input('tags', []));
         return redirect()
             ->route('products.index')
             ->with('success', 'Product updated successfully.');

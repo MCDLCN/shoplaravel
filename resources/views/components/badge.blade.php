@@ -1,7 +1,7 @@
 @props(['color'])
 
 <span style="
-    background-color: {{ $color }}
+    background-color: {{ $color }};
     color: white;
     padding: 4px 8px;
     border-radius: 999px;

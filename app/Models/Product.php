@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Models\Scopes\ActiveScope;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+Use App\Models\Comment;
 
 class Product extends Model
 {
@@ -20,7 +22,6 @@ class Product extends Model
         'description',
         'price',
         'stock',
-        'image',
         'active',
         'discount'
     ];
@@ -44,6 +45,16 @@ class Product extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function image()
+    {
+        return $this->morphOne(Image::class,'imageable');
     }
 
     public function scopeActive(Builder $query): Builder

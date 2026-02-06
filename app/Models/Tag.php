@@ -31,4 +31,10 @@ class Tag extends Model
     {
         return $this->belongsToMany(Product::class);
     }
+
+    public function getColorAttribute(): string
+    {
+        $colors = ['#3490dc', '#38c172', '#aba15a', '#e3342f', '#9561e2'];
+        return $colors[$this->id % count($colors)];
+    }
 }

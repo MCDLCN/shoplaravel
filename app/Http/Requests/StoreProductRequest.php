@@ -16,13 +16,15 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'category_id' => ['required', 'exists:categories,id'],
-            'name'        => ['required', 'string', 'max:255'],
+            'name'        => ['required', 'string', /** 'min:3',*/ 'max:255'],
             'description' => ['nullable', 'string'],
             'price'       => ['required', 'numeric', 'min:0'],
             'stock'       => ['required', 'integer', 'min:0'],
             'image'       => ['nullable', 'image'],
             'active'      => ['nullable', 'boolean'],
             'discount'    => ['nullable','integer', 'min:0', 'max:100'],
+            'tags'        => ['nullable', 'array'],
+            'tags.*'      => ['integer', 'exists:tags,id'],
         ];
     }
 

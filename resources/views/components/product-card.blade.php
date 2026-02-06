@@ -1,7 +1,17 @@
 <div style="border:1px solid #ddd; border-radius:12px; padding:16px; margin-bottom:12px;">
     <div>
     @if($product->image)
-        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+        <img 
+        src="{{ asset('storage/' . $product->image->path) }}" 
+        alt="{{ $product->name }}" 
+        style="
+                max-width: 360px;
+                max-height: 360px;
+                width: auto;
+                height: auto;
+                object-fit: cover;
+                border-radius: 8px;
+                ">
     @endif
     <h3 style="margin:0 0 8px;">{{ $product->name }}</h3>
 
@@ -15,6 +25,15 @@
             </span>
         @else
             {{ $product->formatted_price }}
+        @endif
+    </p>
+    <p>
+        @if ($product->tags->isNotEmpty())
+            <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
+                @foreach ($product->tags as $tag)
+                    <x-badge :color="$tag->color"> {{ $tag->name }} </x-badge>
+                @endforeach
+            </div>
         @endif
     </p>
     <a href="{{ route('categories.show', ['category' => $product->category->id]) }}" style="margin:0 0 12px;">{{ $product->category->name }}</a>
@@ -39,6 +58,12 @@
             <button type="submit" style="background:none; border:none; color:red; cursor:pointer;">
                 Delete
             </button>
+        </form>
+        <form action="{{ route('cart.store') }}" method="POST" style="display:inline;">
+            @csrf
+            <input type="hidden" name="product_id" value="{{ $product->id }}">
+            <input type="hidden" name="quantity" value="1">
+            <button type="submit">Add to cart</button>
         </form>
     </div>
 </div>

@@ -21,6 +21,9 @@
         value="{{ old('name', $product->name ?? '') }}"
         required
     >
+    @error('name')
+        <div style="color:red;">{{ $message }}</div>
+    @enderror
 </div>
 
 <div>
@@ -39,6 +42,9 @@
         value="{{ old('price', $product->price ?? '') }}"
         required
     >
+    @error('price')
+        <div style="color:red;">{{ $message }}</div>
+    @enderror
 </div>
 
 <div>
@@ -51,6 +57,9 @@
         value="{{ old('stock', $product->stock ?? 0) }}"
         required
     >
+    @error('stock')
+        <div style="color:red;">{{ $message }}</div>
+    @enderror
 </div>
 
 <div>
@@ -63,6 +72,9 @@
         max="100"
         value="{{ old('discount', $product->discount ?? 0) }}"
     >
+    @error('discount')
+        <div style="color:red;">{{ $message }}</div>
+    @enderror
 </div>
 
 <div>
@@ -75,11 +87,57 @@
         >
         Active
     </label>
+    @error('active')
+        <div style="color:red;">{{ $message }}</div>
+    @enderror
 </div>
 
 <div>
     <label for="image">Image</label>
+
+    @if (!empty($product) && $product->image)
+        <div style="margin: 8px 0;">
+            <img
+                src="{{ asset('storage/' . $product->image->path) }}"
+                alt="{{ $product->name }}"
+                style="max-width: 180px; border-radius: 8px; border:1px solid #ddd;"
+            >
+        </div>
+    @endif
+
     <input type="file" name="image" id="image" accept="image/*">
+    @error('image')
+        <div style="color:red;">{{ $message }}</div>
+    @enderror
+</div>
+
+<div>
+    <label>Tags</label>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        @foreach ($tags as $tag)
+            <label style="display:flex; align-items:center; gap:6px;">
+                <input
+                    type="checkbox"
+                    name="tags[]"
+                    value="{{ $tag->id }}"
+                    @checked(
+                        in_array(
+                            $tag->id,
+                            old('tags', isset($product) ? $product->tags->pluck('id')->all() : [])
+                        )
+                    )
+                >
+                {{ $tag->name }}
+            </label>
+        @endforeach
+    </div>
+    @error('tags')
+        <div style="color:red;">{{ $message }}</div>
+    @enderror
+
+    @error('tags.*')
+        <div style="color:red;">{{ $message }}</div>
+    @enderror
 </div>
 
 <button type="submit">

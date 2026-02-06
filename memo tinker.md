@@ -40,3 +40,8 @@ use App\Models\Product;
 Product::find(15)->category;
 use App\Models\Category;
 Category::find(1)->products;
+
+use App\Models\Product;
+Product::find(x)->tags()->attach(x) (return null)
+attach() just attaches. detach() detaches. synch() remplaces any existing with the specified ones. synchWithoutDetach() adds any tags that wasn't already attached
+$product->tagq/$tags->products

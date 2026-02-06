@@ -4,25 +4,26 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CategoryStatsController;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 
-//Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show')->where('id', '[0-9]+');
+
 Route::resource('products', ProductController::class);
-/* Route::get('/product/{product}', function(Product $product) {
-    return $product->name;
-}); */
 
-
+Route::resource('cart', CartController::class);
 
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
 });
 
+Route::get('/categories/stats', [CategoryStatsController::class, 'index'])
+    ->name('categories.stats');
 Route::resource(name: 'categories', controller: CategoryController::class);
 
 Route::post('/logout', [PageController::class, 'logout'])->name('logout');

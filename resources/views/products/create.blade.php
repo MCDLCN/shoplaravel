@@ -1,4 +1,4 @@
-@if ($errors->any())
+<!-- @if ($errors->any())
     <div>
         <ul>
             @foreach ($errors->all() as $error)
@@ -6,7 +6,7 @@
             @endforeach
         </ul>
     </div>
-@endif
+@endif -->
 @extends('layouts.app')
 
 @section('title', 'Creating product')
