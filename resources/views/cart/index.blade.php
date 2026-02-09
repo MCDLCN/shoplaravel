@@ -12,7 +12,13 @@
         </li>
     @endforeach
     </ul>
-    for a total of {{ $total }}$
+    <div style="display:flex; gap:12px;">
+    <a>For a total of {{ $total }}$</a>
+    <form method="POST" action="{{ route('cart.clear') }}">
+    @csrf
+    <button type="submit">Empty your cart</button>
+    </form>
+    </div>
 @else
     <h1>Empty aaa cart</h1>
 @endif

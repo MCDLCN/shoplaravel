@@ -56,7 +56,7 @@ class CartController extends Controller
     public function update(Request $request, int $productId)
     {
         $data = $request->validate([
-            'quantity' => ['required', 'integer', 'min:1'],
+            'quantity' => ['required', 'integer'],
         ]);
 
         $cart = session()->get('cart', []);
@@ -65,6 +65,17 @@ class CartController extends Controller
             return redirect()
                 ->back()
                 ->with('error', 'Item not found in cart.');
+        }
+
+        if ($data['quantity'] <1) {
+            if (isset($cart[$productId])) {
+            unset($cart[$productId]);
+            session()->put('cart', $cart);
+            }
+
+            return redirect()
+                ->back()
+                ->with('success', 'Item removed.');
         }
 
         $cart[$productId]['quantity'] = $data['quantity'];
@@ -94,6 +105,7 @@ class CartController extends Controller
     // DELETE ALL: empty the cart
     public function clear()
     {
+        //dd('WOWOW DOES IT HIT OR WHAT?');
         session()->forget('cart');
 
         return redirect()

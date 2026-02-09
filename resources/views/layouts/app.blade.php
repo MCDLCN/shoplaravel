@@ -14,7 +14,7 @@
             <a href="{{ route('about') }}" class="ml-4">About</a>
         </nav>
         <nav style="margin-left:auto;">
-            <a href="{{ route('cart.index') }}">🛒</a>
+            <a href="{{ route('cart.index') }}">🛒<span class="header__cart-badge">{{ count(session()->get('cart', [])) }}</span></a>
             @auth
                 <a href="{{ route('profile') }}">My profile</a>
                 <form action="{{ route('logout') }}" method="POST" class="inline">

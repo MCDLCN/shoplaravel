@@ -16,6 +16,7 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::resource('products', ProductController::class);
 
 Route::resource('cart', CartController::class);
+Route::post('/cart/clear', [CartController::class,'clear'])->name('cart.clear');
 
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');

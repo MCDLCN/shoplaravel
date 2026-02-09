@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
+// use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Models\Scopes\ActiveScope;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 Use App\Models\Comment;
+use App\Rules\Slug;
+
 
 class Product extends Model
 {
@@ -105,7 +107,7 @@ class Product extends Model
     }
 
 
-    protected function name(): Attribute
+/*     protected function name(): Attribute
     {
         return Attribute::make(
             set: fn (string $value) => [
@@ -113,7 +115,7 @@ class Product extends Model
                 'slug' => Str::slug($value),
             ],
         );
-    }
+    } */
 
     protected function stockLabel(): Attribute
     {
