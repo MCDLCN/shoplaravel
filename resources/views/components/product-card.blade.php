@@ -43,12 +43,12 @@
             View details
         </a>
 
-        <a href="{{ route('products.edit', ['product' => $product->id]) }}">
+        <a href="{{ route('admin.products.edit', ['product' => $product->id]) }}">
             Edit product
         </a>
 
         <form
-            action="{{ route('products.destroy', ['product' => $product->id]) }}"
+            action="{{ route('admin.products.destroy', ['product' => $product->id]) }}"
             method="POST"
             onsubmit="return confirm('Are you sure you want to delete this product?');"
         >

@@ -4,7 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Rules\StrongPassword;
+//use App\Rules\StrongPassword;
+use Illuminate\Validation\Rules\Password;
 
 class StoreUserRequest extends FormRequest
 {
@@ -51,7 +52,12 @@ class StoreUserRequest extends FormRequest
                 'string',
                 'min:8',
                 'confirmed',
-                new StrongPassword,
+                //new StrongPassword,
+                Password::min(8)
+                ->letters()      
+                ->mixedCase()     
+                ->numbers()       
+                ->symbols(),
             ],
 
             'is_admin' => ['sometimes', 'boolean'],

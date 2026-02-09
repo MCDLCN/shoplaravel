@@ -12,7 +12,7 @@
 @section('title', 'Creating product')
 
 @section('content')
-<form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
     @include('products._form', ['product' => null])
 </form>
 @endsection

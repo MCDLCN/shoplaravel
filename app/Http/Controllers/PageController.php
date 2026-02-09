@@ -28,4 +28,8 @@ class PageController extends Controller
     {
         return 'Contact us';
     }
+
+    public function register(){
+        return view('auth.register');
+    }
 }

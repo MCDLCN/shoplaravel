@@ -3,6 +3,12 @@
 @section('title', 'Home - ShopLaravel')
 
 @section('content')
-    <h1 class="text-3xl font-bold mb-4">Welcome to ShopLaravel</h1>
-    <p>Discover our exceptional products!</p>
+    @auth
+        <span>We have your familly {{ auth()->user()->first_name }}</span>
+    @endauth
+
+    @guest
+        <a href="{{ route('register') }}">Register</a>
+        <a href="{{ route('login') }}">Login</a>
+    @endguest
 @endsection

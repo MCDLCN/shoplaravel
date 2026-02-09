@@ -45,3 +45,9 @@ use App\Models\Product;
 Product::find(x)->tags()->attach(x) (return null)
 attach() just attaches. detach() detaches. synch() remplaces any existing with the specified ones. synchWithoutDetach() adds any tags that wasn't already attached
 $product->tagq/$tags->products
+
+
+
+
+
+pwd=Abcdefgh1!

@@ -4,7 +4,7 @@
 
 @section('content')
     <h1>{{ count($products) }} active products</h1>
-    <a href="{{  route("products.create")}}" >Create product</a>
+    <a href="{{  route("admin.products.create")}}" >Create product</a>
     <ul>
     @forelse ($products as $product)
         <li>
