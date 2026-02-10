@@ -19,7 +19,11 @@
     <button type="submit">Empty your cart</button>
     </form>
     <br>
-    <a href="{{ route("cart.clear") }}">Clear cart but doesn't work</a>
+    <!-- <a href="{{ route("cart.clear") }}">Clear cart but doesn't work</a> -->
+    <form method="POST" action="{{ route('orders.store') }}">
+        @csrf
+        <button type="submit">Checkout</button>
+    </form>
     </div>
 @else
     <h1>Empty aaa cart</h1>

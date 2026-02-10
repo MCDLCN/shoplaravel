@@ -13,10 +13,17 @@
             <a href="{{ route('products.index') }}" class="ml-4">Products</a>
             <a href="{{ route('about') }}" class="ml-4">About</a>
         </nav>
-        <nav style="margin-left:auto;">
+        <nav style="margin-left:auto; display:flex; align-items:center;gap:8px;">
             <a href="{{ route('cart.index') }}">🛒<span class="header__cart-badge">{{ count(session()->get('cart', [])) }}</span></a>
             @auth
                 <a href="{{ route('profile') }}">My profile</a>
+                <img
+                    src="{{ auth()->user()->image
+                            ? asset('storage/' . auth()->user()->image->path)
+                            : asset('images/avatar-placeholder.png') }}"
+                    alt="Profile picture"
+                    style="width:50px; height:50px; object-fit:cover; border-radius:50%; border:1px solid #ccc;"
+                >
                 <form action="{{ route('logout') }}" method="POST" class="inline">
                     @csrf
                     <button type="submit">Logout</button>

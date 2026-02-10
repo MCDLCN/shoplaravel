@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
@@ -32,7 +33,9 @@ Route::middleware(['auth', 'admin'])
 // Authenticated only
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
-    Route::get('/profile', [PageController::class, 'profile'])->name('profile');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::middleware('auth')->put('/profile/image', [ProfileController::class, 'updateImage'])
+    ->name('profile.image.update');
 
     Route::resource('cart', CartController::class);
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
